@@ -11,7 +11,7 @@ from commands import c_handler
 load_dotenv()
 token = os.getenv("TOKEN")
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
