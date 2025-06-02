@@ -7,9 +7,9 @@ class HelloCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def hello(self, ctx):
-        await ctx.send("Hello!")
+    @app_commands.command()
+    async def hello(self, interaction: discord.Interaction):
+        await interaction.response.send_message("Hello!")
 
 async def setup(bot):
     await bot.add_cog(HelloCog(bot))

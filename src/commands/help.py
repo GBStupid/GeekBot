@@ -7,8 +7,8 @@ class HelpCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def help(self, ctx):
+    @app_commands.command()
+    async def help(self, interaction: discord.Interaction):
         embed = discord.Embed(
             title="❓ bot commands",
             description="here are the available slash commands:",
@@ -19,7 +19,7 @@ class HelpCog(commands.Cog):
         embed.add_field(name="/serverstats", value="shows server stats", inline=False)
         embed.add_field(name="/help", value="shows this help message", inline=False)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
