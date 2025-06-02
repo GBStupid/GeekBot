@@ -4,4 +4,6 @@
 
 # dir
 venv/
+
 src/events/__pycache__/
+src/commands/__pycache__/
