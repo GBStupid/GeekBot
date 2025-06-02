@@ -1,11 +1,7 @@
 import discord
-import asyncio
-import os
-
 from discord.ext import commands
 from dotenv import load_dotenv
-
-from events import handler
+import os
 
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -14,6 +10,11 @@ intents = discord.Intents.default()
 intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+@bot.event
+async def on_ready():
+    await bot.tree.sync()
+    print(f"logged in as {bot.user}")
 
 @bot.tree.command(name="ping", description="shows bot latency")
 async def ping(interaction: discord.Interaction):
@@ -43,14 +44,20 @@ async def serverstats(interaction: discord.Interaction):
     embed.add_field(name="boosts", value=f"level {guild.premium_tier} ({guild.premium_subscription_count} boosts)", inline=True)
     await interaction.response.send_message(embed=embed)
 
-async def main():
-    if not token:
-        raise ValueError("empty token provided.")
-
-    await handler.load_events(bot)
-
+@bot.tree.command(name="help", description="shows this help message")
+async def help_command(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="❓ bot commands",
+        description="here are the available slash commands:",
+        color=discord.Color.yellow()
+    )
+    embed.add_field(name="/ping", value="shows bot latency", inline=False)
+    embed.add_field(name="/helloworld", value="responds with hello world", inline=False)
+    embed.add_field(name="/serverstats", value="shows server stats", inline=False)
+    embed.add_field(name="/help", value="shows this help message", inline=False)
+    await interaction.response.send_message(embed=embed)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    if not token:
+        raise ValueError("empty token provided.")
     bot.run(token)
-
