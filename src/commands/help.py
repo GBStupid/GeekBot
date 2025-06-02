@@ -1,9 +1,14 @@
 import discord
 from discord import app_commands
+from discord.ext import commands
 
-async def setup(bot):
-    @app_commands.command(name="help", description="shows this help message")
-    async def help_command(interaction: discord.Interaction):
+
+class HelpCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def help(self, ctx):
         embed = discord.Embed(
             title="❓ bot commands",
             description="here are the available slash commands:",
@@ -14,7 +19,9 @@ async def setup(bot):
         embed.add_field(name="/serverstats", value="shows server stats", inline=False)
         embed.add_field(name="/help", value="shows this help message", inline=False)
         
-        await interaction.response.send_message(embed=embed)
+        await ctx.send(embed=embed)
 
-    bot.tree.add_command(help_command)
+
+async def setup(bot):
+    await bot.add_cog(HelpCog(bot))
 

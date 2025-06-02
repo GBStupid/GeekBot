@@ -1,10 +1,16 @@
 import discord
 from discord import app_commands
+from discord.ext import commands
+
+
+class HelloCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def hello(self, ctx):
+        await ctx.send("Hello!")
 
 async def setup(bot):
-    @app_commands.command(name="helloworld", description="hello world")
-    async def helloworld(interaction: discord.Interaction):
-        await interaction.response.send_message("hello world")
-
-    bot.tree.add_command(helloworld)
+    await bot.add_cog(HelloCog(bot))
 
