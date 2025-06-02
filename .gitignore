@@ -1,7 +1,6 @@
 *~
 .env
 
-flake.*
 
 # dir
 venv/
