@@ -5,3 +5,4 @@ flake.*
 
 # dir
 venv/
+src/events/__pycache__/

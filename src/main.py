@@ -1,7 +1,11 @@
 import discord
+import asyncio
+import os
+
 from discord.ext import commands
 from dotenv import load_dotenv
-import os
+
+from events import handler
 
 load_dotenv()
 token = os.getenv("TOKEN")
@@ -10,11 +14,6 @@ intents = discord.Intents.default()
 intents.members = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
-
-@bot.event
-async def on_ready():
-    await bot.tree.sync()
-    print(f"logged in as {bot.user}")
 
 @bot.tree.command(name="ping", description="shows bot latency")
 async def ping(interaction: discord.Interaction):
@@ -44,7 +43,14 @@ async def serverstats(interaction: discord.Interaction):
     embed.add_field(name="boosts", value=f"level {guild.premium_tier} ({guild.premium_subscription_count} boosts)", inline=True)
     await interaction.response.send_message(embed=embed)
 
-if __name__ == '__main__':
+async def main():
     if not token:
         raise ValueError("empty token provided.")
+
+    await handler.load_events(bot)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
     bot.run(token)
+
