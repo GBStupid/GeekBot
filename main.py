@@ -28,4 +28,7 @@ async def ping(interaction: discord.Interaction):
 async def helloworld(interaction: discord.Interaction):
     await interaction.response.send_message("hello world")
 
-bot.run(token)
+if __name__ == '__main__':
+    if not token:
+        raise ValueError("Empty token provided.")
+    bot.run(token)
