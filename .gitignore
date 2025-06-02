@@ -1,2 +1,7 @@
 *~
 .env
+
+flake.*
+
+# dir
+venv/
