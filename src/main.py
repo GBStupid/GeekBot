@@ -15,6 +15,10 @@ bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 
 
 async def load_cogs():
+    if not os.path.exists('src'):
+        raise FileNotFoundError(
+            'Source directory does not exist, make sure to run this outside src.')
+
     for folder in ["commands", "events"]:
         for filename in os.listdir(f"src/{folder}"):
             if filename.endswith(".py") and not filename.startswith("_"):
