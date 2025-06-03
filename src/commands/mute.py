@@ -3,19 +3,7 @@ from datetime import timedelta
 import discord
 from discord import app_commands
 
-MAX_TIMEOUT_MINUTES = 40320  # 28 days
-TIME_UNITS = {
-    "seconds": "seconds",
-    "minutes": "minutes",
-    "hours": "hours",
-    "days": "days",
-}
-UNIT_TO_KWARG = {
-    "seconds": "seconds",
-    "minutes": "minutes",
-    "hours": "hours",
-    "days": "days",
-}
+MAX_TIMEOUT_MINUTES = 40320
 UNIT_LIMITS = {
     "seconds": MAX_TIMEOUT_MINUTES * 60,
     "minutes": MAX_TIMEOUT_MINUTES,
@@ -31,8 +19,8 @@ async def setup(bot):
     )
     @app_commands.describe(
         user="The user to mute",
-        duration="Duration (see unit)",
-        unit="Unit of time (seconds, minutes, hours, days)",
+        duration="Mute duration",
+        unit="Unit of time",
     )
     @app_commands.choices(
         unit=[
@@ -55,23 +43,22 @@ async def setup(bot):
             await interaction.followup.send("You can only run this within a guild")
             return
 
-        unit_value = unit.value
-        max_value = UNIT_LIMITS[unit_value]
+        max_value = UNIT_LIMITS[unit.value]
         if not (0 < duration <= max_value):
             if duration <= 0:
-                error_message = "duration must be greater than 0."
+                error_message = "Duration must be greater than 0."
             else:
                 error_message = (
-                    f"duration can't exceed {max_value} {unit_value} (28 days max)."
+                    f"Duration can't exceed {max_value} {unit.value} (28 days max)."
                 )
             await interaction.followup.send(error_message, ephemeral=True)
             return
 
         try:
-            td_kwargs = {UNIT_TO_KWARG[unit_value]: duration}
+            td_kwargs = {unit.value: duration}
             await user.timeout(timedelta(**td_kwargs))
             await interaction.followup.send(
-                f"🔇 muted {user.mention} for `{duration}` {unit_value}."
+                f"🔇 muted {user.mention} for `{duration}` {unit.value}."
             )
         except discord.Forbidden:
             await interaction.followup.send(
