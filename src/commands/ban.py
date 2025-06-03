@@ -12,7 +12,8 @@ class BanCog(commands.Cog):
         days="Days of message to delete",
         reason="Reason of ban",
     )
-    @app_commands.checks.has_permissions(ban=True)
+    @app_commands.checks.bot_has_permissions(ban_members=True)
+    @app_commands.checks.has_permissions(ban_members=True)
     async def ban(
         self,
         interaction: discord.Interaction,
@@ -52,7 +53,8 @@ class BanCog(commands.Cog):
 
     @app_commands.command(name="unban", description="Unban a member with ID")
     @app_commands.describe(user_id="User ID to unban")
-    @app_commands.checks.has_permissions(ban=True)
+    @app_commands.checks.bot_has_permissions(ban_members=True)
+    @app_commands.checks.has_permissions(ban_members=True)
     async def unban(
         self,
         interaction: discord.Interaction,
