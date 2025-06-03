@@ -11,6 +11,7 @@ class BanCog(commands.Cog):
         self,
         interaction: discord.Interaction,
         member: discord.Member,
+        days: app_commands.Range[int, 0, None],
         reason: str = "No reason provided",
         dry_run: bool = False,
     ):
@@ -34,22 +35,9 @@ class BanCog(commands.Cog):
             await interaction.followup.send("You can't ban me silly.", ephemeral=True)
             return
 
-        embed = discord.Embed(
-            title="you have been banned",
-            description=f"reason: {reason}",
-            color=discord.Color.red(),
-        )
-
-        embed.set_footer(text=f"from: {interaction.guild.name}")
-
-        try:
-            await member.send(embed=embed)
-        except discord.Forbidden:
-            pass  # can't dm them
-
         try:
             if not dry_run:
-                await member.ban(reason=reason)
+                await member.ban(reason=reason, delete_message_days=days)
             await interaction.followup.send(
                 f"{member.mention} has been banned. Reason: {reason}"
             )
