@@ -27,7 +27,7 @@ UNIT_LIMITS = {
 async def setup(bot):
     @app_commands.command(
         name="mute",
-        description="Timeout a user dynamically (seconds/minutes/hours/days)",
+        description="Timeout a user",
     )
     @app_commands.describe(
         user="The user to mute",
