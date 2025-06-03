@@ -1,31 +1,44 @@
+from datetime import timedelta
+
 import discord
 from discord import app_commands
-from datetime import timedelta
 
 MAX_TIMEOUT_MINUTES = 40320  # 28 days
 
+
 async def setup(bot):
-    @app_commands.command(name="mute", description="timeout (mute) a user for a duration in minutes")
-    @app_commands.describe(user="the user to mute", duration="duration in minutes (max: 40320)")
-    async def mute(interaction: discord.Interaction, user: discord.Member, duration: int):
-        if not interaction.user.guild_permissions.moderate_members:
-            await interaction.response.send_message("you don’t have permission to mute users.", ephemeral=True)
+
+    @app_commands.command(name="mute", description="Timeout a user")
+    @app_commands.describe(
+        user="The user to mute", duration="Duration in minutes (max: 40320)"
+    )
+    @app_commands.checks.has_permissions(moderate_members=True)
+    async def mute(
+        interaction: discord.Interaction, user: discord.Member, duration: int
+    ):
+        await interaction.response.defer(ephemeral=True)
+
+        if not interaction.guild:
+            await interaction.followup.send("You can only run this within a guild")
             return
 
-        if duration <= 0:
-            await interaction.response.send_message("duration must be greater than 0.", ephemeral=True)
-            return
-
-        if duration > MAX_TIMEOUT_MINUTES:
-            await interaction.response.send_message("duration can't exceed 40320 minutes (28 days).", ephemeral=True)
+        if not (0 < duration <= MAX_TIMEOUT_MINUTES):
+            error_message = (
+                "duration must be greater than 0."
+                if duration <= 0
+                else "duration can't exceed 40320 minutes (28 days)."
+            )
+            await interaction.followup.send(error_message, ephemeral=True)
             return
 
         try:
             await user.timeout(timedelta(minutes=duration))
-            await interaction.response.send_message(f"🔇 muted {user.mention} for `{duration}` minutes.")
+            await interaction.followup.send(
+                f"🔇 muted {user.mention} for `{duration}` minutes."
+            )
         except discord.Forbidden:
-            await interaction.response.send_message("i don’t have permission to mute that user.", ephemeral=True)
-        except Exception as e:
-            await interaction.response.send_message(f"something went wrong: `{e}`", ephemeral=True)
+            await interaction.followup.send(
+                "I don't have permission to mute that user.", ephemeral=True
+            )
 
     bot.tree.add_command(mute)
