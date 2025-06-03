@@ -7,13 +7,18 @@ class BanCog(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="ban", description="Ban a member")
+    @app_commands.describe(
+        member="Member to ban",
+        days="Days of message to delete",
+        reason="Reason of ban",
+    )
+    @app_commands.checks.has_permissions(ban=True)
     async def ban(
         self,
         interaction: discord.Interaction,
         member: discord.Member,
         days: app_commands.Range[int, 0, None],
         reason: str = "No reason provided",
-        dry_run: bool = False,
     ):
         await interaction.response.defer(ephemeral=True)
 
@@ -36,8 +41,7 @@ class BanCog(commands.Cog):
             return
 
         try:
-            if not dry_run:
-                await member.ban(reason=reason, delete_message_days=days)
+            await member.ban(reason=reason, delete_message_days=days)
             await interaction.followup.send(
                 f"{member.mention} has been banned. Reason: {reason}"
             )
@@ -47,11 +51,12 @@ class BanCog(commands.Cog):
             )
 
     @app_commands.command(name="unban", description="Unban a member with ID")
+    @app_commands.describe(user_id="User ID to unban")
+    @app_commands.checks.has_permissions(ban=True)
     async def unban(
         self,
         interaction: discord.Interaction,
         user_id: discord.User,
-        dry_run: bool = False,
     ):
         await interaction.response.defer(ephemeral=True)
 
@@ -61,8 +66,7 @@ class BanCog(commands.Cog):
 
         try:
             user = await self.bot.fetch_user(user_id)
-            if not dry_run:
-                await interaction.guild.unban(user)
+            await interaction.guild.unban(user)
             await interaction.followup.send(f"{user.mention} has been unbanned.")
         except discord.NotFound:
             await interaction.followup.send(
