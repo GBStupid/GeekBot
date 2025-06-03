@@ -4,4 +4,6 @@
 # dir
 venv/
 
+# cache
+.mypy_cache
 **/__pycache__/
