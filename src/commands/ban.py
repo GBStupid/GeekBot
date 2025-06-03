@@ -2,6 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+
 class BanCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -41,15 +42,10 @@ class BanCog(commands.Cog):
             await interaction.followup.send("You can't ban me silly.", ephemeral=True)
             return
 
-        try:
-            await member.ban(reason=reason, delete_message_days=days)
-            await interaction.followup.send(
-                f"{member.mention} has been banned. Reason: {reason}"
-            )
-        except discord.Forbidden:
-            await interaction.followup.send(
-                "I don't have permission to ban this user.", ephemeral=True
-            )
+        await member.ban(reason=reason, delete_message_days=days)
+        await interaction.followup.send(
+            f"{member.mention} has been banned. Reason: {reason}"
+        )
 
     @app_commands.command(name="unban", description="Unban a member with ID")
     @app_commands.describe(user_id="User ID to unban")
@@ -73,10 +69,6 @@ class BanCog(commands.Cog):
         except discord.NotFound:
             await interaction.followup.send(
                 "User not found or not banned.", ephemeral=True
-            )
-        except discord.Forbidden:
-            await interaction.followup.send(
-                "I don't have permission to unban this user.", ephemeral=True
             )
 
 
