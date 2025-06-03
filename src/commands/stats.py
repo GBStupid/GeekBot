@@ -9,34 +9,40 @@ class StatsCog(commands.Cog):
 
     @app_commands.command(name="serverstats", description="shows server stats")
     async def serverstats(self, interaction: discord.Interaction):
-        guild = interaction.guild
-
-        if not guild:
-            raise ValueError("Guild cannot be None")
+        await interaction.response.defer()
+        if not interaction.guild:
+            await interaction.followup.send("You can only run this within a guild.")
+            return
 
         embed = discord.Embed(
-            title=f"📊 server stats for {guild.name}",
-            color=discord.Color.blurple()
+            title=f"📊 server stats for {interaction.guild.name}",
+            color=discord.Color.blurple(),
         )
 
-        embed.set_thumbnail(url=guild.icon.url if guild.icon else None)
-
+        embed.set_thumbnail(
+            url=interaction.guild.icon.url if interaction.guild.icon else None
+        )
 
         embed.add_field(
             name="created on",
-            value=f"<t:{int(guild.created_at.timestamp())}:F> (`{int(guild.created_at.timestamp())}`)",
-            inline=True
+            value=(
+                f"<t:{int(interaction.guild.created_at.timestamp())}:F> "
+                f"(`{int(interaction.guild.created_at.timestamp())}`)"
+            ),
+            inline=True,
         )
 
-        embed.add_field(name="members", value=str(guild.member_count), inline=True)
+        embed.add_field(
+            name="members", value=str(interaction.guild.member_count), inline=True
+        )
 
         embed.add_field(
             name="boosts",
-            value=f"level {guild.premium_tier} ({guild.premium_subscription_count} boosts)",
-            inline=True
+            value=f"level {interaction.guild.premium_tier} ({interaction.guild.premium_subscription_count} boosts)",
+            inline=True,
         )
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot):
