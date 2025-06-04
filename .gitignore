@@ -7,3 +7,6 @@ venv/
 # cache
 .mypy_cache
 **/__pycache__/
+
+# compose files
+docker-compose.*.yml
