@@ -1,25 +1,37 @@
+import json
+import re
+
 from discord.ext import commands
 
 
 class OnMessageCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot, config):
         self.bot = bot
+        self.config = config
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user:
+        if message.author.id == self.bot.user.id:
             return
 
         content = message.content.lower()
 
-        if content in ["brb", "be right back"]:
-            await message.channel.send(
-                "https://tenor.com/view/this-isnt-an-airport-no-gif-26083761"
-            )
-        elif content in ["im back", "i'm back"]:
-            await message.channel.send(f"hi back, i'm {self.bot.user.name}")
+        for rule in self.config:
+            if re.search(rule["match"], content):
+                response = rule["response"].format(
+                    user_name=self.bot.user.name,
+                    author_name=message.author.name,
+                    content=content,
+                )
+                if response:
+                    await message.channel.send(response)
+
+                break
+
         await self.bot.process_commands(message)
 
 
 async def setup(bot):
-    await bot.add_cog(OnMessageCog(bot))
+    with open("config/auto_respond.json", "r", encoding="utf-8") as f:
+        config = json.load(f)
+    await bot.add_cog(OnMessageCog(bot, config))

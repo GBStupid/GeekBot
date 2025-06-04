@@ -1,0 +1,10 @@
+[
+  {
+    "match": "\\b(brb|be right back)\\b",
+    "response": "https://tenor.com/view/this-isnt-an-airport-no-gif-26083761"
+  },
+  {
+    "match": "\\b(im back|i'm back)\\b",
+    "response": "hi back, i'm {user_name}"
+  }
+]
