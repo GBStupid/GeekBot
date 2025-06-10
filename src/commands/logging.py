@@ -14,6 +14,7 @@ async def setup(bot):
     async def log(interaction: discord.Interaction, channel: discord.TextChannel):
         global log_channel_id
         log_channel_id = channel.id
+        # TODO: save this to config for persistence
         await interaction.response.send_message(f"✅ logging channel set to {channel.mention}", ephemeral=True)
 
     async def send_log(bot, guild: discord.Guild, embed: discord.Embed):
